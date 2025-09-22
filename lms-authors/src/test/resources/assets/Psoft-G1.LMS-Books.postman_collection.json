@@ -1,0 +1,1688 @@
+{
+	"info": {
+		"_postman_id": "34487a7e-ed53-4c9d-ab34-a05fc126bfbf",
+		"name": "LMS-Books",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4160446"
+	},
+	"item": [
+		{
+			"name": "Author",
+			"item": [
+				{
+					"name": "As Librarian",
+					"item": [
+						{
+							"name": "Login as Librarian",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Authententicates\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    let token = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.environment.set(\"librarianToken\", token);    \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"maria@gmail.com\",\r\n    \"password\": \"Mariaroberta!123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_auth+users}}{{baseUrl}}/public/login",
+									"host": [
+										"{{host_auth+users}}{{baseUrl}}"
+									],
+									"path": [
+										"public",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author By Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let author = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtag\", author); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "ETag",
+										"value": "{{authorEtag}}",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/7",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"7"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Author wo/ photo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Created\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(201); \r",
+											"\r",
+											"    let author = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtagWithoutPhoto\", author); \r",
+											"\r",
+											"    let authorNumber = pm.response.json().authorNumber;\r",
+											"    pm.environment.set(\"authorNumberCreatedWithoutPhoto\", authorNumber); \r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Irineu José",
+											"type": "text"
+										},
+										{
+											"key": "bio",
+											"value": "bio do Irineu José",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author by Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let author = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtagWithoutPhoto\", author); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "ETag",
+										"value": "{{authorEtagWithoutPhoto}}"
+									}
+								],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/{{authorNumberCreatedWithoutPhoto}}",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"{{authorNumberCreatedWithoutPhoto}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Author w/ photo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Created\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(201); \r",
+											"\r",
+											"    let author = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtagWithPhoto\", author); \r",
+											"\r",
+											"    let authorNumber = pm.response.json().authorNumber;\r",
+											"    pm.environment.set(\"authorNumberCreatedWithPhoto\", authorNumber); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "photo",
+											"type": "file",
+											"src": "images.png"
+										},
+										{
+											"key": "name",
+											"value": "Irineu José",
+											"type": "text"
+										},
+										{
+											"key": "bio",
+											"value": "Bio do ireneu José",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author w/ photo by Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let author = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtagWithPhoto\", author); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "ETag",
+										"value": "{{authorEtagWithPhoto}}"
+									}
+								],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/{{authorNumberCreatedWithPhoto}}",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"{{authorNumberCreatedWithPhoto}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Author w/ blank bio",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Bad request\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(400); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Irineu José\",\r\n    \"bio\": \"adsf\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Author",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let author = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtagWithoutPhoto\", author); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{authorEtagWithoutPhoto}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Alexandre Pereiraa\",\r\n    \"bio\":\"Alexandre Pereira é licenciado e mestre em Engenharia Electrotécnica e de Computadores, pelo Instituto Superior Técnico..\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/{{authorNumberCreatedWithoutPhoto}}",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"{{authorNumberCreatedWithoutPhoto}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete photo - Insuccess",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Photo not found\", function(){",
+											"",
+											"    pm.response.to.have.status(404); ",
+											"",
+											"    let author = pm.response.headers.get(\"ETag\");",
+											"    pm.environment.set(\"authorEtagWithoutPhoto\", author); ",
+											"",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{authorEtagWithoutPhoto}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/{{authorNumberCreatedWithoutPhoto}}/photo",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"{{authorNumberCreatedWithoutPhoto}}",
+										"photo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete photo - Success",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Photo deleted\", function(){",
+											"",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{authorEtagWithPhoto}}"
+									}
+								],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/{{authorNumberCreatedWithPhoto}}/photo",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"{{authorNumberCreatedWithPhoto}}",
+										"photo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete photo again - Insuccess",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Photo not found\", function(){",
+											"",
+											"    pm.response.to.have.status(404); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{authorEtag}}"
+									}
+								],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/{{authorNumberCreatedWithPhoto}}/photo",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"{{authorNumberCreatedWithPhoto}}",
+										"photo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateAuthor - w/ photo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Created\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(201); \r",
+											"\r",
+											"    let author = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtagWithPhoto\", author); \r",
+											"\r",
+											"    let authorNumber = pm.response.json().authorNumber;\r",
+											"    pm.environment.set(\"authorNumberCreatedWithPhoto\", authorNumber); \r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "photo",
+											"type": "file",
+											"src": "images.png"
+										},
+										{
+											"key": "name",
+											"value": "Irineu José",
+											"type": "text"
+										},
+										{
+											"key": "bio",
+											"value": "Bio do ireneu José",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{librarianToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "As Reader",
+					"item": [
+						{
+							"name": "Login as Manuel",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Authtenticates\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    let token = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.environment.set(\"readerToken\", token);    \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"manuel@gmail.com\",\r\n    \"password\": \"Manuelino123!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_auth+users}}{{baseUrl}}/public/login",
+									"host": [
+										"{{host_auth+users}}{{baseUrl}}"
+									],
+									"path": [
+										"public",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author By Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/3",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author By Id - Author doesnt exist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Not found\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(404);    \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/30",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"30"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Authors by Name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"",
+											"    pm.response.to.have.status(200); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors?name=A",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "A"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author's CoAuthors",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"",
+											"    pm.response.to.have.status(200); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/7/coauthors",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"7",
+										"coauthors"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Gets a author photo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"",
+											"    pm.response.to.have.status(200); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{readerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/2/photo",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"2",
+										"photo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete photo - Insuccess",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Photo not found\", function(){",
+											"",
+											"    pm.response.to.have.status(403); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{readerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/authors/{{authorNumberCreatedWithPhoto}}/photo",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"{{authorNumberCreatedWithPhoto}}",
+										"photo"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{readerToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Book",
+			"item": [
+				{
+					"name": "As Reader",
+					"item": [
+						{
+							"name": "Login as Manuel",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Authtenticates\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    let token = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.environment.set(\"readerToken\", token);    \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"manuel@gmail.com\",\r\n    \"password\": \"Manuelino123!\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_auth+users}}{{baseUrl}}/public/login",
+									"host": [
+										"{{host_auth+users}}{{baseUrl}}"
+									],
+									"path": [
+										"public",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Book By ISBN",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books/9789896379636",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"9789896379636"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Book By ISBN - not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Not Found\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(404); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books/9782722203426",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"9782722203426"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Books By Genre",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books?genre=Inf",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "genre",
+											"value": "Inf"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Books By Title",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books?title=o",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "title",
+											"value": "o"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Books By Author Name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books?authorName=Manuel Antonio Pina",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "authorName",
+											"value": "Manuel Antonio Pina"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get book photo as reader",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"",
+											"    pm.response.to.have.status(200); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{readerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books/9789722328296/photo",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"9789722328296",
+										"photo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Books",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"",
+											"    pm.response.to.have.status(200); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"page\": {\r\n        \"number\" : 1,\r\n        \"limit\" : 10\r\n    },\r\n    \"query\": {\r\n        \"title\" : \"\",\r\n        \"genre\" : \"\",\r\n        \"authorName\" : \"ma\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books/search",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"search"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{readerToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "As Librarian",
+					"item": [
+						{
+							"name": "Login as Librarian",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Authententicates\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    let token = pm.response.headers.get(\"Authorization\");\r",
+											"    pm.environment.set(\"librarianToken\", token);    \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"maria@gmail.com\",\r\n    \"password\": \"Mariaroberta!123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_auth+users}}{{baseUrl}}/public/login",
+									"host": [
+										"{{host_auth+users}}{{baseUrl}}"
+									],
+									"path": [
+										"public",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Book",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Created\", function(){",
+											"",
+											"    pm.response.to.have.status(201); ",
+											"",
+											"    let bookEtagCreated = pm.response.headers.get(\"ETag\");",
+											"    pm.environment.set(\"bookEtagCreated\", bookEtagCreated);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generateRandomISBN13() {",
+											"    // Generate the first 12 digits randomly",
+											"    let isbn = Array.from({ length: 12 }, () => Math.floor(Math.random() * 10));",
+											"",
+											"    // Calculate the checksum using the ISBN-13 formula",
+											"    let checksum = 0;",
+											"    isbn.forEach((digit, index) => {",
+											"        checksum += digit * (index % 2 === 0 ? 1 : 3);",
+											"    });",
+											"    checksum = (10 - (checksum % 10)) % 10;",
+											"",
+											"    // Add the checksum as the 13th digit",
+											"    isbn.push(checksum);",
+											"",
+											"    return isbn.join('');",
+											"}",
+											"",
+											"// Generate the ISBN",
+											"let randomISBN13 = generateRandomISBN13();",
+											"",
+											"// Save it in an environment variable",
+											"pm.environment.set(\"randomISBN\", randomISBN13);",
+											"",
+											"// Log it for reference",
+											"console.log(\"Generated ISBN-13:\", randomISBN13);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "genre",
+											"value": "Infantil",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "os irmaos q dançaram",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "aulas de samba",
+											"type": "text"
+										},
+										{
+											"key": "authors[]",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "photo",
+											"type": "file",
+											"src": "images.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books/{{randomISBN}}",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"{{randomISBN}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Book",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"",
+											"    pm.response.to.have.status(200); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{bookEtagCreated}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "description ",
+											"value": "olá olá",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books/{{randomISBN}}",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"{{randomISBN}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Book by ISBN",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let bookEtagCreated = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"bookEtagCreated\", bookEtagCreated); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books/{{randomISBN}}",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"{{randomISBN}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Books By genre",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"",
+											"    pm.response.to.have.status(200); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books?genre=Inf",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "genre",
+											"value": "Inf"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Book photo - not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(404); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books/9789720706386/photo",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"9789720706386",
+										"photo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Book photo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host_books}}{{baseUrl}}/books/{{randomISBN}}/photo",
+									"host": [
+										"{{host_books}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"{{randomISBN}}",
+										"photo"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{librarianToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

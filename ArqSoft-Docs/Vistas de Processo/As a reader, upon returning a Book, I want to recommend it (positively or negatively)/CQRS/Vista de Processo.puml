@@ -1,0 +1,41 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title As a reader, upon returning a Book, I want to recommend it (positively or negatively).
+
+participant "lendingsC[n]\n:LendingsC" as LenC
+participant "lendingsQ[n]\n:LendingsQ" as LenQ
+participant "recommendationsC[n]\n:RecommendationsC" as RecC
+participant "recommendationsQ[n]\n:RecommendationsQ" as RecQ
+participant MessageBroker as Mb
+
+note left of LenC
+  Nota: Os eventos de subscribe não estão descritos
+end note
+-> LenC: PATCH /api/LenCdings/{year}/{seq} (with recommendation data)
+activate LenC
+activate Mb
+LenC -> Mb: publish{lending_returned}
+<-- LenC: 202 accepted
+
+Mb -> RecC: notify{lending_returned}
+activate RecC
+RecC -> RecC: create(recommendation)
+RecC -> Mb: publish{recommendation_created}
+deactivate RecC
+Mb -> RecQ: notify{recommendation_created}
+activate RecQ
+RecQ -> RecQ: save(recommendation)
+Mb -> LenC: notify{recommendation_created}
+deactivate RecQ
+LenC -> LenC: patch(returnLen)
+LenC -> Mb: publish{returnLen}
+Mb -> LenQ: notify{returnLen}
+activate LenQ
+LenQ -> LenQ: save(returnLen}
+deactivate RecC
+
+
+<-- LenC: 200 ok
+deactivate LenQ
+
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+title As a reader, I want to suggest the acquisition of a new Book.
+
+participant "Suggestion" as suggestion
+participant "Librarian" as librarian
+participant "Book" as book
+participant "Message Broker" as mb
+note left of suggestion
+  Nota: Os eventos de subscribe não estão descritos
+end note
+ -> suggestion: POST /suggest/isbn(with book details)
+activate suggestion
+suggestion -> suggestion: suggestBook(bookSuggestion)
+
+activate mb
+suggestion -> suggestion: save(bookSuggestion)
+suggestion -> mb: publish{bookSuggestion}
+<-- suggestion:  202 Accepted
+
+mb -> librarian: notify{bookSuggestion}
+activate librarian
+
+librarian -> librarian: Librarian analyze suggestion and accepts it
+
+librarian -> mb: publish{"book.accepted"}
+
+deactivate librarian
+
+    mb -> book: Notify {book.accepted}
+    activate book
+    book -> book: createSuggestedBook(book)
+    book -> mb: publish{book}
+    mb -> book: notify{book}
+    deactivate book
+
+deactivate librarian
+
+@enduml

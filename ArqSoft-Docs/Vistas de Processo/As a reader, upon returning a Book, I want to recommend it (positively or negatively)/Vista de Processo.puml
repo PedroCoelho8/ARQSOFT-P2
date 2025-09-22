@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title As a reader, upon returning a Book, I want to recommend it (positively or negatively).
+
+participant Lendings as Len
+participant Recommendations as Rec
+participant MessageBroker as Mb
+note left of Len
+  Nota: Os eventos de subscribe não estão descritos
+end note
+
+-> Len: PATCH /api/lendings/{year}/{seq} (with recommendation data)
+activate Len
+Len -> Len: patch(returnLenTemp)
+activate Mb
+Len -> Mb: publish{lending_returned}
+<-- Len: 202 accepted
+
+Mb -> Rec: notify{lending_returned}
+activate Rec
+Rec -> Rec: create(recommendationTemp)
+Rec -> Mb: publish{recommendation_created}
+Mb -> Len: notify{reccommendation_created}
+Len -> Len: patch(returnLen)
+Len -> Mb: publish{returnLen}
+Mb -> Rec: notify{returnLen}
+Rec -> Rec: create(recommendation)
+Rec -> Mb: publish{recommendation}
+deactivate Rec
+
+Mb -> Len: notify{recommendation}
+
+<-- Len: 200 ok
+
+
+@enduml

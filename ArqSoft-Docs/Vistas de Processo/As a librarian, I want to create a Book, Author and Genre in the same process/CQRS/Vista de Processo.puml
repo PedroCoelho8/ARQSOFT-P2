@@ -1,0 +1,79 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title As a librarian, I want to create a Book, Author and Genre in the same process
+
+participant "booksC[n]\n:BooksC" as BooksC1
+
+participant "booksQ[n]\n:BooksQ" as BooksQ1
+
+participant "authorsC[n]\n:AuthorsC" as AuthorsC1
+
+participant "authorsQ[n]\n:AuthorsQ" as AuthorsQ1
+
+participant "genresC[n]\n:GenresC" as GenresC1
+
+participant "genresQ[n]\n:GenresQ" as GenresQ1
+
+
+participant "MB:MessageBroker" as Mb
+
+note left of BooksC1
+  Nota: Os eventos de subscribe não estão descritos
+end note
+
+-> BooksC1: POST /api/books/saga {with author and genre data}
+activate BooksC1
+BooksC1 -> Mb: publish{book_author_genre_request}
+activate Mb
+<-- BooksC1 : 202 accepted
+
+Mb -> AuthorsC1: notify{book_author_genre_request}
+deactivate BooksQ1
+activate AuthorsC1
+AuthorsC1 -> AuthorsC1: create(author)
+AuthorsC1 -> AuthorsC1: save(author)
+AuthorsC1 -> Mb: publish{book_author_genre_request}
+AuthorsC1 -> Mb: publish{author}
+Mb -> AuthorsC1: notify{author}
+deactivate AuthorsC1
+
+
+Mb -> AuthorsQ1: notify{author}
+
+activate AuthorsQ1
+AuthorsQ1 -> AuthorsQ1: save(author)
+
+
+Mb -> BooksC1: notify{author}
+deactivate AuthorsQ1
+
+Mb -> GenresC1: notify{book_author_genre_request}
+
+
+activate GenresC1
+GenresC1 -> GenresC1: create(genre)
+GenresC1 -> Mb: publish{genre}
+Mb -> GenresC1: notify{genre}
+deactivate GenresC1
+
+Mb -> GenresQ1: notify{genre}
+activate GenresQ1
+GenresQ1 -> GenresQ1: save(genre)
+
+Mb -> BooksC1: notify{genre}
+deactivate GenresQ1
+
+BooksC1 -> BooksC1: create(book)
+BooksC1 -> BooksC1: save(book)
+BooksC1 -> Mb: publish{book}
+Mb -> BooksC1: notify{book}
+
+
+Mb -> BooksQ1: notify{book}
+activate BooksQ1
+BooksQ1 -> BooksQ1: save(book)
+<-- BooksC1: 200 created
+deactivate BooksQ1
+
+@enduml

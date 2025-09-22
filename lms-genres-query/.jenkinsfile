@@ -1,0 +1,160 @@
+pipeline {
+    agent any
+
+    environment {
+        // Configuração do Maven no Windows
+        MAVEN_HOME = 'C:\\Maven\\apache-maven-3.9.9'
+
+        GIT_REPO_URL = 'https://github.com/leonardogomes3/ODSOFT2024-ProjectP2-1240485-1211239.git/'  // URL do repositório Git
+        GIT_BRANCH = 'main'  // Especifique o branch a ser verificado
+        CREDENTIALS_ID = 'GitHub_Credentials'  // ID das credenciais
+
+        SERVER_PORT = '2226'
+
+        IMAGE_NAME = 'lmsgenresquery'
+        IMAGE_TAG = 'latest'
+        RECIPIENT_EMAIL = 'arqsoft2024@gmail.com'
+
+    }
+
+    stages {
+
+        stage('Debug Environment') {
+            steps {
+                bat 'set'  // Exibe as variáveis de ambiente no Windows
+            }
+        }
+
+        stage('Check Docker') {
+            steps {
+                bat 'docker --version'  // Verifica se o Docker está instalado e funcionando
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                // Etapa para clonar o repositório Git
+                checkout([$class: 'GitSCM', branches: [[name: "${GIT_BRANCH}"]],
+                          userRemoteConfigs: [[url: "${GIT_REPO_URL}", credentialsId: "${CREDENTIALS_ID}"]]])
+            }
+        }
+
+        stage('Clean') {
+            steps {
+                dir('lms-authnusers') {
+                    bat """
+                        "${MAVEN_HOME}\\bin\\mvn" clean
+                    """
+                }
+            }
+        }
+
+        stage('Package'){
+            steps {
+                dir('lms-authnusers') {
+                    bat """
+                        "${MAVEN_HOME}\\bin\\mvn" package
+                    """
+                }
+            }
+        }
+
+        stage('Test'){
+            steps {
+                dir('lms-authnusers') {
+                    bat """
+                        "${MAVEN_HOME}\\bin\\mvn" test
+                    """
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('lms-authnusers') {
+                    bat "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."  // Cria a imagem Docker
+                }
+            }
+        }
+
+        stage('Deploy with run.sh') {
+            steps {
+                script {
+                    dir('lms-authnusers') {
+                        bat """
+                            "C:\\Program Files\\Git\\bin\\bash.exe" ./run.sh 2
+                            """
+                    }
+                }
+            }
+        }
+
+        stage('Shutdown Microservices with shutdown.sh') {
+            steps {
+                script {
+                    dir('lms-authnusers') {
+                        bat """
+                            "C:\\Program Files\\Git\\bin\\bash.exe" ./shutdown.sh
+                            """
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+            echo "Email recipient: ${RECIPIENT_EMAIL}"
+            emailext (
+                    subject: "ArqSoft - Service ${IMAGE_NAME} Deployed for Approval",
+                    body: """
+                                    Hello,
+
+                                    The service has been deployed successfully.
+
+                                    You can access it using the following link: ${RUN_TESTS_DISPLAY_URL}.
+
+                                    Please review and provide your feedback.
+
+                                    Regards,
+                                    Jenkins
+                                    """,
+                    to: "${RECIPIENT_EMAIL}",
+                    from: "odsoft2024@gmail.com",
+            )
+        }
+        failure {
+            echo 'Pipeline failed!'
+
+            echo "Email recipient: ${RECIPIENT_EMAIL}"
+
+            emailext (
+                    subject: "ArqSoft - Pipeline ${IMAGE_NAME} Failed",
+                    body: """
+                            Hello,
+
+                            The pipeline execution failed. Please check Jenkins logs for more details.
+
+                            You can access it using the following link: ${RUN_TESTS_DISPLAY_URL}.
+
+                            Regards,
+                            Jenkins
+                            """,
+                    to: "${RECIPIENT_EMAIL}",
+                    from: "odsoft2024@gmail.com",
+            )
+        }
+    }
+
+    // Caso precise limpar os contêineres após a execução
+    /*
+    post {
+        always {
+            echo 'Cleaning up...'
+            bat """
+                docker-compose -f docker-compose.yml down || echo "Nothing to clean."
+            """
+        }
+    }
+    */
+}

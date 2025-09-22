@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "80ec9606-141c-43b0-9b41-bce7d6b16546",
+		"name": "LMS-Auth&Users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4160446"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login as Librarian",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    let token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"librarianToken\", token);    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"maria@gmail.com\",\r\n    \"password\": \"Mariaroberta!123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_auth+users}}{{baseUrl}}/public/login",
+							"host": [
+								"{{host_auth+users}}{{baseUrl}}"
+							],
+							"path": [
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Manuel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    let token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"readerToken\", token);    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"manuel@gmail.com\",\r\n    \"password\": \"Manuelino123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_auth+users}}{{baseUrl}}/public/login",
+							"host": [
+								"{{host_auth+users}}{{baseUrl}}"
+							],
+							"path": [
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

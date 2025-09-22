@@ -1,0 +1,112 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven 3.9.9' // The name of the Maven installation in Jenkins tool config
+    }
+
+    environment {
+
+        //MAVEN_HOME = '/opt/homebrew' // (MacOS)
+        MAVEN_HOME = '/usr/share/maven' // (Ubuntu)
+
+        GIT_REPO_URL = 'https://nunopsilva@bitbucket.org/nunopsilva/lms-monolith.git'  // Your Git repository URL
+        GIT_BRANCH = 'main'  // Specify the branch to check out
+        CREDENTIALS_ID = '5387a7da-c200-4b87-966b-7507e418f576'  // Credentials ID for authentication
+
+        SERVER_PORT = '2226'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                // Checkout the code from your repository
+                // git clone 'https://nunopsilva@bitbucket.org/nunopsilva/lms-monolith.git' // Replace with your repo URL
+
+                // Step to clone the Git repository
+                git branch: "${GIT_BRANCH}",
+                    url: "${GIT_REPO_URL}",
+                    credentialsId: "${CREDENTIALS_ID}"
+            }
+        }
+/*
+        stage('Clean') {
+            steps {
+                script {
+                    sh "'${MAVEN_HOME}/bin/mvn' clean install"
+                }
+            }
+        }
+
+        stage('Validate') {
+            steps {
+                script {
+                    sh "'${MAVEN_HOME}/bin/mvn' validate"
+                }
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                script {
+                    sh "'${MAVEN_HOME}/bin/mvn' compile"
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    // Run tests
+                    withEnv(["PATH+JDK=${JAVA_HOME}/bin"]) {
+                        sh "'${MAVEN_HOME}/bin/mvn' test"
+                    }
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                script {
+                    // Package the application
+                    sh "'${MAVEN_HOME}/bin/mvn' package"
+                }
+            }
+        }
+*/
+        stage('Deploy') {
+            steps {
+                script {
+                    // Deploy the application (this can be adjusted as per your deployment strategy)
+                    // Example: Deploy to a remote server, or use a tool like Docker
+
+                    sh "cd target && JENKINS_NODE_COOKIE=dontKillMe && nohup java -jar proj-0.0.1-SNAPSHOT.jar --server.port=${SERVER_PORT} --spring.datasource.url=jdbc:h2:mem:test --spring.datasource.username=sa --spring.datasource.password= > app.log 2>&1 &"
+
+/*
+                    sh """
+                        cd /Users/nunosilva/.jenkins/workspace/lms/target
+
+                        # Perform the SCP
+                        scp ./proj-0.0.1-SNAPSHOT.jar VS664:/root
+
+                        # Execute the remote SSH command in one go
+                        ssh VS664 nohup java -jar ./proj-0.0.1-SNAPSHOT.jar --server.port=2224 --spring.datasource.url=jdbc:h2:mem:test --spring.datasource.username=sa --spring.datasource.password= > ./app.log 2>&1 &
+                    """
+*/
+                }
+            }
+        }
+
+
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
