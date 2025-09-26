@@ -51,7 +51,17 @@ Reengenharia da aplicação LMS, migrando para uma arquitetura descentralizada/d
 - **API Versioning** para evolução sem breaking changes
 - **Event Sourcing** e **CQRS** (quando aplicável)
 - **Docker** para ambientes reprodutíveis e deployment consistente
-- **CI/CD** para automação de builds, testes e releases (GitHub Actions)
+
+## Tecnologias Utilizadas
+
+- **Java 17** (backend dos microserviços)
+- **Spring Boot** (desenvolvimento de microserviços, discovery, config server)
+- **RabbitMQ** (mensageria e comunicação assíncrona)
+- **MySQL** (persistência polimórfica por serviço)
+- **Docker & Docker Compose** (contenorização e orquestração local)
+- **JMeter** (testes de performance)
+- **Postman** (testes e documentação da API)
+- **Swagger/OpenAPI** (documentação de APIs)
 
 ## Organização do Repositório
 
